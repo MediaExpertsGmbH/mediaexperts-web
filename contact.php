@@ -154,7 +154,11 @@ if ($html && $txt) {
     'MIME-Version: 1.0',
     "Content-Type: multipart/alternative; boundary=\"$b\"",
   ]);
-  send_mail($email, hdr($subject), $h2, $mime);
+  $confirmed = send_mail($email, hdr($subject), $h2, $mime);
+  if (!$confirmed) error_log('contact.php: confirmation to visitor was not accepted');
+} else {
+  $confirmed = false;
+  error_log('contact.php: email/autoresponder.html or .txt missing');
 }
 
-out(200, ['ok' => true]);
+out(200, ['ok' => true, 'confirmation' => $confirmed]);
