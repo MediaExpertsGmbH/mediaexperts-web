@@ -1,11 +1,11 @@
-"""Builds site/de/, site/fr/ and site/it/ from the English page site/index.html.
+"""Builds de/, fr/ and it/ from the English page index.html.
 
 Edit the English page, add any new text to TEXT below, then run:  python3 build-lang.py
 The script lists every English string it could not find, so stale entries show up.
 """
 import pathlib, re
 
-ROOT = pathlib.Path(__file__).parent / "site"
+ROOT = pathlib.Path(__file__).parent
 LANGS = ["de", "fr", "it"]
 HTML_LANG = {"de": "de-CH", "fr": "fr-CH", "it": "it-CH"}
 

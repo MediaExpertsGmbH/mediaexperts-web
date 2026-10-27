@@ -8,34 +8,28 @@ New site for **mediaexperts.ch**, ported from the Claude Design "Website v2" tem
 - Contact: **info@mediaexperts.ch**, **Bahnhofstrasse 10, 8001 Zürich**. **No phone numbers.**
 
 ## Structure
-- `site/index.html`: English (source page). Five chapters: Intro, GroundZero, RPLX Property Navigator (scroll story), RPLX features, Markets, Company + office photo, Contact.
-- `site/de/`, `site/fr/`, `site/it/`: **generated** by `build-lang.py`. Never edit them by hand: edit the English page, add new text to the `TEXT` table in `build-lang.py`, then run `python3 build-lang.py` (it lists any English text without a translation).
-- `site/impressum.html`: legal notice in DE/EN/FR/IT.
-- `site/assets/cinema-cables.js`: the animated cable canvas, which morphs per chapter via `data-cable` attributes.
-- `site/assets/app.js`: chapter pill, Property Navigator steps, unit picking, contact form (opens the visitor's mail app), dimmed cables on phones.
-- `site/assets/gz.js`: loads the GroundZero KPIs live (Supabase `gz_stats()` + enabled `gz_landings`, the same rule as rplx `src/lib/groundzero/coverage.js`). The numbers in the HTML are the fallback.
-- `site/assets/me.css`: hover states, 3D walkthrough animation, language menu, phone layout.
-- `email/autoresponder.html` + `.txt`: branded auto-reply for info@mediaexperts.ch (EN lead, DE/FR/IT short versions). Its images load from `https://mediaexperts.ch/assets/email/`, so they show once the site is deployed.
+The repo root **is** the website root: clone it straight into the hosting's site folder.
+- `index.html`: English (source page). Chapters: Intro, GroundZero, RPLX Property Navigator (scroll story), RPLX features, Markets, Company + office photo, Contact.
+- `de/`, `fr/`, `it/`: **generated** by `build-lang.py`. Edit the English page, add new text to the `TEXT` table in `build-lang.py`, run `python3 build-lang.py`, and commit the result.
+- `impressum.html`: legal notice in DE/EN/FR/IT. `404.html`: not-found page.
+- `assets/cinema-cables.js`: animated cable canvas (morphs per chapter via `data-cable`).
+- `assets/app.js`: chapter pill, Property Navigator steps, unit picking, contact form, dimmed cables on phones.
+- `assets/gz.js`: live GroundZero KPIs (Supabase `gz_stats()` + enabled `gz_landings`, same rule as rplx `src/lib/groundzero/coverage.js`). The numbers in the HTML are the fallback.
+- `assets/me.css`: hover states, 3D walkthrough, language menu, phone layout.
+- `.htaccess`: HTTPS, www → mediaexperts.ch, 404 page, caching. It also blocks `.git`, `README.md`, `build-lang.py` and `email/` from the web.
+- `email/autoresponder.html` + `.txt`: branded auto-reply for info@mediaexperts.ch. Its images load from `https://mediaexperts.ch/assets/email/`.
 
-Preview: `python3 -m http.server 8765 --directory site`, then open http://localhost:8765
+Preview locally: `python3 -m http.server 8765`, then open http://localhost:8765
 
 ## Deploy (Infomaniak web hosting)
-The server pulls this repo; the website root is the `site/` folder. DE/FR/IT pages are committed, so the server only needs git.
-
-First time (SSH into the hosting):
+The site's main folder on the server is a clone of this repo. First time, in that (empty) folder:
 ```bash
-cd ~/sites
-git clone https://github.com/MediaExpertsGmbH/mediaexperts-web.git
+git clone https://github.com/MediaExpertsGmbH/mediaexperts-web.git .
 ```
-Then in the Infomaniak Manager set the site's root folder to `sites/mediaexperts-web/site`.
-
 Every update:
 ```bash
-cd ~/sites/mediaexperts-web && git pull --ff-only
+git pull --ff-only
 ```
-
-Editing: change `site/index.html` (English), run `python3 build-lang.py`, commit and push, then pull on the server.
-`site/.htaccess` forces HTTPS, redirects www to mediaexperts.ch and serves `404.html`.
 
 ## Open items
 - **Fonts:** Red Hat Display/Mono load from Google Fonts, and the privacy note says so. Self-host them to drop that.
