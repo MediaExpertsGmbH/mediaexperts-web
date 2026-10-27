@@ -45,9 +45,9 @@ a{color:inherit;text-decoration:none}a:hover{color:#F04A55}
 .x24:focus{border-color:#F04A55 !important}
 .x25:hover{background:#F4F2EF !important;color:#0E0D0C !important}
 </style>
-<link rel="stylesheet" href="../assets/me.css?v=4">
+<link rel="stylesheet" href="../assets/me.css?v=6">
 <script src="../assets/cinema-cables.js?v=2" defer></script>
-<script src="../assets/app.js?v=2" defer></script>
+<script src="../assets/app.js?v=3" defer></script>
 <script src="../assets/gz.js?v=3" defer></script>
 </head>
 <body>
@@ -312,7 +312,6 @@ a{color:inherit;text-decoration:none}a:hover{color:#F04A55}
 <section id="contact" data-cable="logo" data-dim="1" data-chapter="05" data-name="CONTACT" style="min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;gap:40px;padding:clamp(120px,14vh,160px) clamp(20px,4vw,48px) clamp(32px,5vh,56px);max-width:1440px;margin:0 auto">
 <div style="display:flex;flex-direction:column;gap:20px;padding-top:42vh">
 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;font-family:'Red Hat Mono',monospace;font-size:13px;letter-spacing:.16em;color:#A8A39D"><span style="color:#F04A55">05</span>CONSTRUISONS LA SUITE</div>
-<a href="mailto:info@mediaexperts.ch" style="font-weight:900;font-size:clamp(40px,8.4vw,148px);line-height:.92;letter-spacing:-.055em;color:#F4F2EF;overflow-wrap:anywhere" class="x19">info@mediaexperts.ch</a>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:40px 64px;border-top:1px solid rgba(244,242,239,.16);padding-top:48px">
 <div style="flex:1 1 320px;display:flex;flex-direction:column;gap:14px;min-width:0">
@@ -323,12 +322,15 @@ a{color:inherit;text-decoration:none}a:hover{color:#F04A55}
 <div style="flex:1.4 1 480px;min-width:0;background:#1B1A18;border-radius:24px;padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;align-items:flex-start;gap:14px">
 <div style="width:52px;height:52px;border-radius:50%;background:#F04A55;color:#0E0D0C;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900">✓</div>
 <div style="font-weight:900;font-size:30px;letter-spacing:-.03em">Merci, <span id="sent-name"></span>.</div>
-<p style="margin:0;font-size:17px;line-height:1.55;color:#C9C4BE">Votre messagerie devrait s’être ouverte avec votre message. Sinon, écrivez à info@mediaexperts.ch.</p>
+<p id="sent-ok" style="margin:0;font-size:17px;line-height:1.55;color:#C9C4BE">Votre message est en route vers notre équipe. Nous vous avons envoyé une confirmation par e-mail.</p>
+<p id="sent-mail" hidden style="margin:0;font-size:17px;line-height:1.55;color:#C9C4BE">Votre messagerie devrait s’être ouverte avec votre message. Sinon, écrivez à info@mediaexperts.ch.</p>
 <button id="reset" type="button" style="background:none;border:none;padding:0;color:#F4F2EF;font:inherit;font-weight:700;font-size:16px;cursor:pointer" class="x20">Envoyer un autre message →</button>
 </div>
 </div>
 <div id="form-wrap" style="flex:1.4 1 480px;min-width:0;display:flex">
-<form id="msg" style="flex:1 1 auto;width:100%;min-width:0;display:flex;flex-direction:column;gap:16px">
+<form id="msg" action="/contact.php" method="post" style="flex:1 1 auto;width:100%;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><input name="website" tabindex="-1" autocomplete="off"></div>
+<input type="hidden" name="t" id="form-t">
 <div style="display:flex;flex-wrap:wrap;gap:10px">
 <button type="button" class="topic" data-i="0" aria-pressed="true" style="padding:10px 16px;border-radius:999px;border:1px solid #F4F2EF;background:#F4F2EF;color:#0E0D0C;font:inherit;font-weight:700;font-size:15px;cursor:pointer">Démo RPLX</button>
 <button type="button" class="topic" data-i="1" aria-pressed="false" style="padding:10px 16px;border-radius:999px;border:1px solid rgba(244,242,239,.24);background:transparent;color:#F4F2EF;font:inherit;font-weight:700;font-size:15px;cursor:pointer">GroundZero</button>

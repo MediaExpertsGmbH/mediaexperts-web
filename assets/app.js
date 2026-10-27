@@ -90,15 +90,36 @@
       x.style.borderColor = on ? '#F4F2EF' : 'rgba(244,242,239,.24)';
     });
   }));
-  $('#msg').addEventListener('submit', e => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const body = `${f.get('message')}\n\n— ${f.get('name')}${f.get('company') ? ', ' + f.get('company') : ''}\n${f.get('email')}`;
-    location.href = `mailto:info@mediaexperts.ch?subject=${encodeURIComponent('Website: ' + topics[topic].textContent)}&body=${encodeURIComponent(body)}`;
-    $('#sent-name').textContent = String(f.get('name')).split(' ')[0];
+  // contact form: posts to contact.php (mails us + sends the visitor a confirmation);
+  // if the server can't take it, falls back to the visitor's own mail app so nothing is lost
+  const TOPIC_KEYS = ['RPLX demo', 'GroundZero', 'A project', 'Something else'];
+  const form = $('#msg'), submit = $('button[type="submit"]', form);
+  const stamp = () => { $('#form-t').value = String(Date.now()); };
+  stamp();
+  const showSent = (viaServer, name) => {
+    $('#sent-name').textContent = String(name).split(' ')[0];
+    $('#sent-ok').hidden = !viaServer; $('#sent-mail').hidden = viaServer;
     $('#form-wrap').hidden = true; $('#sent').hidden = false;
+  };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = new FormData(form);
+    f.set('topic', TOPIC_KEYS[topic]);
+    f.set('lang', (document.documentElement.lang || 'en').slice(0, 2));
+    submit.disabled = true; submit.style.opacity = '.6';
+    let ok = false;
+    try {
+      const r = await fetch('/contact.php', { method: 'POST', body: f, headers: { Accept: 'application/json' } });
+      ok = r.ok && (await r.json()).ok === true;
+    } catch (err) { ok = false; }
+    submit.disabled = false; submit.style.opacity = '';
+    if (!ok) {
+      const body = `${f.get('message')}\n\n— ${f.get('name')}${f.get('company') ? ', ' + f.get('company') : ''}\n${f.get('email')}`;
+      location.href = `mailto:info@mediaexperts.ch?subject=${encodeURIComponent('Website: ' + topics[topic].textContent)}&body=${encodeURIComponent(body)}`;
+    }
+    showSent(ok, f.get('name'));
   });
-  $('#reset').addEventListener('click', () => { $('#sent').hidden = true; $('#form-wrap').hidden = false; });
+  $('#reset').addEventListener('click', () => { form.reset(); stamp(); $('#sent').hidden = true; $('#form-wrap').hidden = false; });
 
   // on phones the cables run behind the text: dim them in the reading-heavy chapters
   const narrow = matchMedia('(max-width: 720px)');
