@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+ini_set('display_errors', '0');   // never show PHP errors (paths, config) to visitors; they go to the error log
+
 const TO         = 'info@mediaexperts.ch';
 const FROM_NAME  = 'Media Experts';
 const PER_IP     = 3;    // messages per IP per hour
@@ -70,7 +72,11 @@ function smtp_send(array $c, string $to, string $subject, string $headers, strin
 }
 
 $cfgFile = __DIR__ . '/contact-config.php';
-$cfg = is_file($cfgFile) ? (include $cfgFile) : null;
+$cfg = null;
+if (is_file($cfgFile)) {
+  try { $cfg = include $cfgFile; }
+  catch (\Throwable $e) { error_log('contact.php: contact-config.php is not valid PHP: ' . $e->getMessage()); $cfg = null; }
+}
 $smtp = is_array($cfg) && !empty($cfg['user']) && !empty($cfg['pass']);
 $from = $smtp ? $cfg['user'] : TO;   // Infomaniak requires the sender to be the login's own address
 
