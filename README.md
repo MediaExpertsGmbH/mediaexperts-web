@@ -19,9 +19,23 @@ New site for **mediaexperts.ch**, ported from the Claude Design "Website v2" tem
 
 Preview: `python3 -m http.server 8765 --directory site`, then open http://localhost:8765
 
-## Deploy
-Every push to `main` deploys `site/` to GitHub Pages (`.github/workflows/pages.yml`). The workflow also runs `build-lang.py` first, so the DE/FR/IT pages always match the English one.
-Domain: `site/CNAME` = mediaexperts.ch. DNS at Infomaniak: apex A/AAAA records point to GitHub Pages, `www` is a CNAME to `mediaexpertsgmbh.github.io`. MX and SPF stay on Infomaniak.
+## Deploy (Infomaniak web hosting)
+The server pulls this repo; the website root is the `site/` folder. DE/FR/IT pages are committed, so the server only needs git.
+
+First time (SSH into the hosting):
+```bash
+cd ~/sites
+git clone https://github.com/MediaExpertsGmbH/mediaexperts-web.git
+```
+Then in the Infomaniak Manager set the site's root folder to `sites/mediaexperts-web/site`.
+
+Every update:
+```bash
+cd ~/sites/mediaexperts-web && git pull --ff-only
+```
+
+Editing: change `site/index.html` (English), run `python3 build-lang.py`, commit and push, then pull on the server.
+`site/.htaccess` forces HTTPS, redirects www to mediaexperts.ch and serves `404.html`.
 
 ## Open items
 - **Fonts:** Red Hat Display/Mono load from Google Fonts, and the privacy note says so. Self-host them to drop that.
