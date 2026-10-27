@@ -18,7 +18,7 @@ DirectoryIndex index.html
   RewriteRule ^(impressum|agb|kontakt|contact)/?$ /impressum.html [R=301,L]
   # never serve git metadata or the repo's working files
   RewriteRule (^|/)\.git(/|$) - [F,L]
-  RewriteRule ^(README\.md|build-lang\.py|\.gitignore|email(/.*)?)$ - [F,L]
+  RewriteRule ^(README\.md|build-lang\.py|\.gitignore|contact-config\.php|email(/.*)?)$ - [F,L]
 </IfModule>
 
 <IfModule mod_headers.c>

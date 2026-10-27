@@ -1,12 +1,17 @@
 <?php
-// Media Experts — contact form endpoint (Infomaniak web hosting, PHP mail()).
+// Media Experts — contact form endpoint (Infomaniak web hosting).
 // POST from assets/app.js. Sends the inquiry to info@ (Reply-To: the visitor) and the
 // branded confirmation from email/autoresponder.* to the visitor. Answers JSON {ok, error?}.
+//
+// Sending: authenticated SMTP (Infomaniak's recommended way) with the login from
+// contact-config.php, a file that exists only on the server (never in git):
+//   <?php return ['host' => 'mail.infomaniak.com', 'port' => 465,
+//                 'user' => 'website@mediaexperts.ch', 'pass' => 'the mailbox password'];
+// Without that file it falls back to PHP mail(), which Infomaniak switches off by default.
 
 declare(strict_types=1);
 
 const TO         = 'info@mediaexperts.ch';
-const FROM       = 'info@mediaexperts.ch';
 const FROM_NAME  = 'Media Experts';
 const PER_IP     = 3;    // messages per IP per hour
 const PER_DAY    = 60;   // messages per day in total (protects the confirmation mail from abuse)
@@ -23,6 +28,57 @@ function clean(string $s, int $max): string {
   return mb_substr($s, 0, $max);
 }
 function hdr(string $s): string { return '=?UTF-8?B?' . base64_encode($s) . '?='; }
+
+/** Minimal SMTPS client (implicit TLS, AUTH LOGIN). Returns true when the server accepted the message. */
+function smtp_send(array $c, string $to, string $subject, string $headers, string $body): bool {
+  $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]);
+  $fp = @stream_socket_client('ssl://' . $c['host'] . ':' . (int)$c['port'], $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $ctx);
+  if (!$fp) { error_log("contact.php smtp connect: $errstr"); return false; }
+  stream_set_timeout($fp, 15);
+  $read = function () use ($fp): string {
+    $data = '';
+    while (($line = fgets($fp, 515)) !== false) { $data .= $line; if (strlen($line) < 4 || $line[3] === ' ') break; }
+    return $data;
+  };
+  $step = function (?string $cmd, array $ok) use ($fp, $read): bool {
+    if ($cmd !== null) fwrite($fp, $cmd . "\r\n");
+    $r = $read();
+    $good = in_array((int)substr($r, 0, 3), $ok, true);
+    if (!$good) error_log('contact.php smtp: ' . trim(strtok($r, "\n") ?: 'no reply'));
+    return $good;
+  };
+  $ok = $step(null, [220])
+     && $step('EHLO mediaexperts.ch', [250])
+     && $step('AUTH LOGIN', [334])
+     && $step(base64_encode($c['user']), [334])
+     && $step(base64_encode($c['pass']), [235])
+     && $step('MAIL FROM:<' . $c['user'] . '>', [250])
+     && $step('RCPT TO:<' . $to . '>', [250, 251])
+     && $step('DATA', [354]);
+  if ($ok) {
+    $msg = "To: <$to>\r\nSubject: $subject\r\nDate: " . date('r') . "\r\n"
+         . 'Message-ID: <' . bin2hex(random_bytes(12)) . "@mediaexperts.ch>\r\n"
+         . $headers . "\r\n\r\n" . $body;
+    $msg = str_replace("\n", "\r\n", str_replace(["\r\n", "\r"], "\n", $msg));
+    $msg = preg_replace('/^\./m', '..', $msg);              // SMTP dot-stuffing
+    fwrite($fp, $msg . "\r\n.\r\n");
+    $ok = $step(null, [250]);
+  }
+  @fwrite($fp, "QUIT\r\n");
+  fclose($fp);
+  return $ok;
+}
+
+$cfgFile = __DIR__ . '/contact-config.php';
+$cfg = is_file($cfgFile) ? (include $cfgFile) : null;
+$smtp = is_array($cfg) && !empty($cfg['user']) && !empty($cfg['pass']);
+$from = $smtp ? $cfg['user'] : TO;   // Infomaniak requires the sender to be the login's own address
+
+function send_mail(string $to, string $subject, string $headers, string $body): bool {
+  global $smtp, $cfg, $from;
+  if ($smtp) return smtp_send($cfg + ['host' => 'mail.infomaniak.com', 'port' => 465], $to, $subject, $headers, $body);
+  return mail($to, $subject, $body, $headers, '-f' . $from);
+}
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') out(405, ['ok' => false, 'error' => 'method']);
 
@@ -63,14 +119,13 @@ $body = "New message from mediaexperts.ch\n\n"
       . str_repeat('-', 40) . "\n\n"
       . $message . "\n";
 $headers = implode("\r\n", [
-  'From: ' . hdr(FROM_NAME . ' Website') . ' <' . FROM . '>',
+  'From: ' . hdr(FROM_NAME . ' Website') . ' <' . $from . '>',
   'Reply-To: ' . hdr($name) . ' <' . $email . '>',
   'MIME-Version: 1.0',
   'Content-Type: text/plain; charset=UTF-8',
-  'Content-Transfer-Encoding: 8bit',
+  'Content-Transfer-Encoding: base64',
 ]);
-$sent = mail(TO, hdr("Website: $topic — $name"), $body, $headers, '-f' . FROM);
-if (!$sent) out(502, ['ok' => false, 'error' => 'send']);
+if (!send_mail(TO, hdr("Website: $topic — $name"), $headers, chunk_split(base64_encode($body)))) out(502, ['ok' => false, 'error' => 'send']);
 
 $hits[] = $now;
 @file_put_contents($ipFile, json_encode(array_values($hits)), LOCK_EX);
@@ -87,13 +142,13 @@ if ($html && $txt) {
         . "--$b\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($html))
         . "--$b--\r\n";
   $h2 = implode("\r\n", [
-    'From: ' . hdr(FROM_NAME) . ' <' . FROM . '>',
-    'Reply-To: ' . FROM,
+    'From: ' . hdr(FROM_NAME) . ' <' . $from . '>',
+    'Reply-To: ' . TO,
     'Auto-Submitted: auto-replied',
     'MIME-Version: 1.0',
     "Content-Type: multipart/alternative; boundary=\"$b\"",
   ]);
-  @mail($email, hdr($subject), $mime, $h2, '-f' . FROM);
+  send_mail($email, hdr($subject), $h2, $mime);
 }
 
 out(200, ['ok' => true]);

@@ -17,7 +17,7 @@ The repo root **is** the website root: clone it straight into the hosting's site
 - `assets/gz.js`: live GroundZero KPIs (Supabase `gz_stats()` + enabled `gz_landings`, same rule as rplx `src/lib/groundzero/coverage.js`). The numbers in the HTML are the fallback.
 - `assets/me.css`: hover states, 3D walkthrough, language menu, phone layout.
 - `.htaccess`: HTTPS, www → mediaexperts.ch, 404 page, caching. It also blocks `.git`, `README.md`, `build-lang.py` and `email/` from the web.
-- `contact.php`: contact form endpoint (PHP `mail()` on Infomaniak). Mails the inquiry to info@ with Reply-To set to the visitor, then sends the visitor the branded confirmation from `email/`. Has a bot field, a minimum fill time and rate limits (3 per IP per hour, 60 per day). If it fails, the form falls back to the visitor's mail app.
+- `contact.php`: contact form endpoint. Sends through authenticated SMTP (mail.infomaniak.com:465) using `contact-config.php`, which lives **only on the server** (git-ignored, blocked by `.htaccess`). Without that file it tries PHP `mail()`, which Infomaniak switches off by default. Mails the inquiry to info@ with Reply-To set to the visitor, then sends the visitor the branded confirmation from `email/`. Has a bot field, a minimum fill time and rate limits (3 per IP per hour, 60 per day). If it fails, the form falls back to the visitor's mail app.
 - `email/autoresponder.html` + `.txt`: branded confirmation for info@mediaexperts.ch. Its images load from `https://mediaexperts.ch/assets/email/`.
 
 Preview locally: `python3 -m http.server 8765`, then open http://localhost:8765
