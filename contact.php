@@ -150,7 +150,6 @@ if ($html && $txt) {
   $h2 = implode("\r\n", [
     'From: ' . hdr(FROM_NAME) . ' <' . $from . '>',
     'Reply-To: ' . TO,
-    'Auto-Submitted: auto-replied',
     'MIME-Version: 1.0',
     "Content-Type: multipart/alternative; boundary=\"$b\"",
   ]);
