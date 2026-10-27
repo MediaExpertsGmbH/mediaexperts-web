@@ -148,7 +148,6 @@ TEXT = [
   "Votre message est en route vers notre équipe. Nous vous avons envoyé une confirmation par e-mail.",
   "Il tuo messaggio è in viaggio verso il nostro team. Ti abbiamo inviato una conferma via e-mail."),
  ("Send another message →", "Weitere Nachricht senden →", "Envoyer un autre message →", "Invia un altro messaggio →"),
- ("RPLX demo", "RPLX-Demo", "Démo RPLX", "Demo RPLX"),
  ("A project", "Ein Projekt", "Un projet", "Un progetto"),
  ("Something else", "Etwas anderes", "Autre chose", "Altro"),
  ("NAME", "NAME", "NOM", "NOME"),

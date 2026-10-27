@@ -92,7 +92,7 @@
   }));
   // contact form: posts to contact.php (mails us + sends the visitor a confirmation);
   // if the server can't take it, falls back to the visitor's own mail app so nothing is lost
-  const TOPIC_KEYS = ['RPLX demo', 'GroundZero', 'A project', 'Something else'];
+  const TOPIC_KEYS = ['A project', 'GroundZero', 'Something else'];
   const form = $('#msg'), submit = $('button[type="submit"]', form);
   const stamp = () => { $('#form-t').value = String(Date.now()); };
   stamp();

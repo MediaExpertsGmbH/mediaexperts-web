@@ -11,7 +11,7 @@ const FROM_NAME  = 'Media Experts';
 const PER_IP     = 3;    // messages per IP per hour
 const PER_DAY    = 60;   // messages per day in total (protects the confirmation mail from abuse)
 const MIN_SECS   = 3;    // a human needs at least this long to fill in the form
-const TOPICS     = ['RPLX demo', 'GroundZero', 'A project', 'Something else'];
+const TOPICS     = ['A project', 'GroundZero', 'Something else'];
 const LANGS      = ['en', 'de', 'fr', 'it'];
 
 header('Content-Type: application/json; charset=utf-8');
