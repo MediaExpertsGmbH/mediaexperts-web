@@ -80,7 +80,6 @@ TEXT = [
  ("Secured in escrow ✓", "Auf Treuhandkonto gesichert ✓", "Sécurisé sous séquestre ✓", "Garantito in deposito fiduciario ✓"),
  (" is reserved for Anna.", " ist für Anna reserviert.", " est réservé pour Anna.", " è prenotata per Anna."),
  ("Nothing has been built yet. The sale already has.", "Noch ist nichts gebaut. Der Verkauf schon.", "Rien n’est encore construit. La vente, si.", "Non è ancora costruito nulla. La vendita sì."),
- ("Book a demo →", "Demo buchen →", "Réserver une démo →", "Prenota una demo →"),
  ("RPLX · REAL ESTATE OS FOR OFF-PLAN", "RPLX · REAL ESTATE OS FÜR VERKAUF AB PLAN", "RPLX · L’OS IMMOBILIER POUR LA VENTE SUR PLAN", "RPLX · L’OS IMMOBILIARE PER LA VENDITA SU CARTA"),
  ("Sell it before it stands", "Verkaufen, bevor es steht", "Vendez-le avant qu’il ne soit construit", "Vendilo prima che sia costruito"),
  ("One system for the whole off-plan sale. Inventory, buyers, agents and money in one place, instead of spreadsheets, PDFs and a dozen tools.",
