@@ -1,0 +1,90 @@
+/* Media Experts — additions to the inline template styles */
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid #F04A55; outline-offset: 3px; }
+
+/* 3D walkthrough: slow camera drift, crossfade between rooms */
+.walk { position: relative; height: 200px; border-radius: 14px; overflow: hidden; background: #1B1A18; }
+.walk > .w1, .walk > .w2 { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform, opacity; }
+.walk > .w1 { animation: walk-a 14s ease-in-out infinite; }
+.walk > .w2 { animation: walk-b 14s ease-in-out infinite; opacity: 0; }
+@keyframes walk-a {
+  0%   { transform: scale(1.12) translate(3%, 1%);  opacity: 1; }
+  42%  { transform: scale(1.22) translate(-4%, -1%); opacity: 1; }
+  50%  { opacity: 0; }
+  92%  { opacity: 0; }
+  100% { transform: scale(1.12) translate(3%, 1%);  opacity: 1; }
+}
+@keyframes walk-b {
+  0%, 42% { opacity: 0; transform: scale(1.1) translate(-3%, 0); }
+  50%  { opacity: 1; }
+  92%  { opacity: 1; transform: scale(1.2) translate(4%, -2%); }
+  100% { opacity: 0; transform: scale(1.2) translate(4%, -2%); }
+}
+.walk-tag { position: absolute; top: 10px; left: 10px; padding: 4px 9px; border-radius: 999px; background: rgba(14,13,12,.75); color: #F4F2EF; font-family: 'Red Hat Mono', monospace; font-size: 11px; letter-spacing: .1em; }
+.walk-tag { animation: walk-rec 1.6s ease-in-out infinite; }
+@keyframes walk-rec { 50% { color: #F04A55; } }
+.walk-plan { position: absolute; right: 10px; bottom: 10px; width: 74px; height: 70px; object-fit: contain; background: #F4F2EF; border-radius: 10px; padding: 4px; box-shadow: 0 8px 20px rgba(0,0,0,.45); }
+@media (prefers-reduced-motion: reduce) { .walk > .w1, .walk > .w2, .walk-tag { animation: none; } .walk > .w2 { display: none; } }
+
+/* language menu */
+.langs { position: relative; }
+.langs summary { list-style: none; cursor: pointer; padding: 8px 12px; border-radius: 999px; color: #C9C4BE; font-family: 'Red Hat Mono', monospace; font-size: 13px; letter-spacing: .08em; }
+.langs summary::-webkit-details-marker { display: none; }
+.langs summary:hover, .langs[open] summary { color: #F4F2EF; }
+.langs div { position: absolute; right: 0; top: calc(100% + 10px); display: flex; flex-direction: column; min-width: 150px; padding: 6px; border-radius: 16px; background: #1B1A18; border: 1px solid rgba(244,242,239,.12); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.langs div a { padding: 9px 12px; border-radius: 10px; font-size: 15px; color: #C9C4BE; }
+.langs div a:hover { background: #24211F; color: #F4F2EF; }
+.langs div a[aria-current] { color: #F04A55; }
+
+/* phones */
+@media (max-width: 720px) {
+  header nav a[href="#groundzero"], header nav a[href="#company"] { display: none; }
+  header a[href="#top"] > div:last-child { font-size: 44px !important; }
+}
+@media (max-width: 380px) { header nav a[href="#rplx"] { display: none; } }
+
+/* phones: Property Navigator */
+@media (max-width: 720px) {
+  [data-cable-target] { right: auto !important; left: 4vw !important; width: min(68vh, 92vw) !important; }
+  .hot[data-i="2"] > span { left: auto !important; right: 0; }
+  #steps .step { padding: 3px 0 !important; }
+  #steps .step > span:last-child { font-size: 16px !important; }
+  #ph-steps > div { gap: 12px !important; }
+  #card { bottom: 14px !important; padding: 16px !important; gap: 12px !important; border-radius: 20px !important; }
+  #card .u-id { font-size: 26px; }
+  .walk { height: 132px; }
+  #st1 > div { gap: 8px 16px !important; }
+  #st1 b { font-size: 17px !important; }
+}
+@media (max-height: 700px) and (max-width: 720px) { #ph-steps #steps { display: none; } }
+
+@media (max-width: 720px) { #chap { display: none !important; } }
+
+/* header backdrop so content never runs under the logo */
+header { background: linear-gradient(#0E0D0C 0%, rgba(14,13,12,.85) 55%, rgba(14,13,12,0) 100%); }
+
+@media (max-width: 720px) {
+  /* contact: email on one line, solid panels so the cable logo stays behind */
+  #contact a[href="mailto:info@mediaexperts.ch"]:not([href*="subject"]) { font-size: 8.2vw !important; overflow-wrap: normal !important; white-space: nowrap; }
+  #contact > div:nth-of-type(2), #contact > div:nth-of-type(3) { position: relative; background: #0E0D0C; box-shadow: 0 -40px 40px #0E0D0C; }
+  /* markets: name above figures */
+  section[data-cable="skyline"] a { flex-direction: column; align-items: flex-start !important; gap: 4px !important; }
+  section[data-cable="skyline"] a > span:last-child { text-align: left !important; }
+}
+
+/* German headline has one long word ("Neubauprojekte") that must stay on one line */
+@media (max-width: 720px) { html[lang^="de"] h1 { font-size: min(56px, 11.8vw) !important; } }
+
+/* very small phones (320 px): tighter header in every language */
+@media (max-width: 380px) {
+  header > div { padding-left: 14px !important; padding-right: 14px !important; gap: 10px !important; }
+  header a[href="#top"] { gap: 8px !important; }
+  header a[href="#top"] > div:first-child { width: 34px !important; height: 34px !important; }
+  header a[href="#top"] > div:last-child { font-size: 36px !important; }
+  header nav { gap: 2px !important; }
+  header nav a[href="#contact"] { padding: 8px 12px !important; font-size: 14px !important; }
+  .langs summary { padding: 8px 8px; }
+}
+
+/* French/Italian headline phrases are two words: let them wrap on phones */
+@media (max-width: 720px) { html[lang^="fr"] h1 span, html[lang^="it"] h1 span { white-space: normal !important; } }
